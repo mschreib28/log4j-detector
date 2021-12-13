@@ -33,6 +33,7 @@ public class Log4JDetector {
 
     private static boolean verbose = false;
     private static boolean foundHits = false;
+    private static int numHits = 0;
 
     public static void main(String[] args) throws Exception {
         List<String> argsList = new ArrayList<>(Arrays.asList(args));
@@ -72,10 +73,11 @@ public class Log4JDetector {
             analyze(dir);
         }
         if (foundHits) {
+            System.out.println("-- Found " + numHits + " vulnerable Log4J 2.x samples in supplied paths.");
             System.exit(2);
         } else {
             System.out.println("-- No vulnerable Log4J 2.x samples found in supplied paths: " + argsList);
-            System.out.println("-- Congratulations, the supplied paths are not vulnerable to CVE-2021-44228 !  :-) ");
+            System.out.println("-- Congratulations, the supplied paths are NOT vulnerable to CVE-2021-44228 !");
         }
     }
 
@@ -226,19 +228,19 @@ public class Log4JDetector {
 
             StringBuilder buf = new StringBuilder();
             if (isLog4j) {
-                buf.append(zipPath).append(" contains Log4J-2.x   ");
+                buf.append(zipPath).append("\tLog4J-2.x\t");
                 if (isVulnerable) {
                     if (isLog4j_2_10) {
                         if (isSafe) {
-                            buf.append(">= 2.15.0 SAFE :-)");
+                            buf.append(">= 2.15.0\tSAFE");
                         } else {
-                            buf.append(">= 2.10.0 _VULNERABLE_ :-(");
+                            buf.append(">= 2.10.0\t_VULNERABLE_");
                         }
                     } else {
-                        buf.append(">= 2.0-beta9 (< 2.10.0) _VULNERABLE_ :-(");
+                        buf.append(">= 2.0-beta9 (< 2.10.0)\t_VULNERABLE_");
                     }
                 } else {
-                    buf.append("<= 2.0-beta8 _POTENTIALLY_SAFE_ :-|");
+                    buf.append("<= 2.0-beta8\t_POTENTIALLY_SAFE_");
                 }
                 if (!isSafe) {
                     foundHits = true;
